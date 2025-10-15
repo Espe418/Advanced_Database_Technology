@@ -1,3 +1,16 @@
+--NYIRASABATO ESPERANCE
+REG_NO:215009303
+--ADVANCED DATABASE TECHNOLOGY
+-- ASSIGNMENT 1
+-- SCHEMA CREATION AND DATA MANIPULATION
+-- DATE: 20/10/2025
+
+
+
+
+
+
+--Create all  6 tables with appropriate constraints and data types.
 CREATE TABLE Department(
 DeptID INT PRIMARY KEY,
 DeptName varchar(50) NOT NULL,
@@ -12,7 +25,7 @@ Lastname varchar(50) NOT NULL,
 Roles varchar(50) NOT NULL,
 Email Varchar(50)  UNIQUE ,
 HireDate date,
-DeptID INT REFERENCES Department(DeptID)
+DeptID INT REFERENCES Department(DeptID) 
 );
 
 
@@ -45,8 +58,10 @@ AttendanceID  INT PRIMARY KEY ,
 AttendanceDate date NOT NULL ,
 Status varchar(40) NOT NULL ,
 HoursWorked INT NOT NULL ,
-StaffID INT REFERENCES Staff(StaffID) ON DELETE CASCADE 
+StaffID INT REFERENCES Staff(StaffID) ON DELETE CASCADE ---applying  the  delete cascade function
 );
+
+-- Insert data for 5 departments   
 INSERT INTO Department(DeptID, DeptName, Place, Head)
 VALUES
 (1, 'Finance', 'Head Office _Kigali', 'Alice Nshuti'),
@@ -55,7 +70,7 @@ VALUES
 (4, 'Economics', 'Business Center_Musanze', 'David Nkurunziza'),
 (5, 'Health and Medicine', 'Medical Wing _Rwamagana', 'Dr. Sarah Uwimana');
 
-
+-- Insert data for 5 salary structures.
 INSERT INTO salary (SalaryID, BasePay, Allowances, Deductions)
 VALUES
     (1, 3000, 500, 200),
@@ -64,7 +79,7 @@ VALUES
     (4, 6000, 1000, 500),
     (5, 5500, 900, 450);
 
-
+-- insert 10 staff members.
 	INSERT INTO Staff (StaffID, DeptID, FirstName, LastName, Roles, Email, HireDate)
 VALUES
 (11, 01, 'John', 'Mukiza', 'Manager', 'john.mukiza@company.com', '2021-01-10'),
@@ -77,7 +92,7 @@ VALUES
 (8, 05, 'Linda', 'Uwera', 'Marketing Officer', 'linda.uwera@company.com', '2023-08-09'),
 (9, 04, 'Patrick', 'Mutabazi', 'System Analyst', 'patrick.mutabazi@company.com', '2024-01-12'),
 (10, 01, 'Sylvia', 'Uwitonze', 'Supervisor', 'sylvia.uwitonze@company.com', '2024-06-18');
-
+-- Insert data for 5 payroll records.
 INSERT INTO Payroll (PayrollID, PeriodStart, PeriodEnd, Netpay,  SalaryID)
 VALUES
 (1, '2025-10-01', '2025-10-15', 7500000.00,  5),
@@ -88,19 +103,19 @@ VALUES
 
 
 
-select* from Payroll ;
-ALTER TABLE Payroll
-ADD COLUMN staffid INT REFERENCES Staff(staffid);
+select* from Payroll ;---- 3. Write a query to retrieve the total number of employees in each department along with the
+--- total gross salary (BasePay + Allowances) and total net pay for each department.
+ALTER TABLE Payroll    --- 4. Add a new column StaffID to the Payroll table to establish a relationship between Payroll and Staff tables.
+ADD COLUMN staffid INT REFERENCES Staff(staffid);----
 
 
 
-
-
-
-
+---Retrieve payroll reports per department. 
+--- 3. Write a query to retrieve the total number of employees in each department along with the
+--- total gross salary (BasePay + Allowances) and total net pay for each department.
 SELECT 
-    d.deptname,
-    COUNT(s.staffid) AS NumEmployees,
+    d.deptname,--   
+    COUNT(s.staffid) AS NumEmployees,   
     SUM(sa.basepay + sa.allowances) AS TotalGrossSalary,
     SUM(p.netpay) AS TotalNetPay
 FROM payroll p
@@ -109,13 +124,14 @@ JOIN department d ON s.deptid = d.deptid
 JOIN salary sa ON p.salaryid = sa.salaryid
 GROUP BY d.deptname
 ORDER BY d.deptname;
-----
+
+----  insert a staff member for leave record testing 
 INSERT INTO staff (staffid, firstname, lastname, roles, email, hiredate, deptid)
 VALUES 
-(1, 'John', 'Doe', 'Teller', 'john.doe@bank.com', '2022-01-10', '1');
+(1, 'John', 'Doe', 'Teller', 'john.doe@bank.com', '2022-01-10', '1'); --- Insert a staff member for leave record testing
 INSERT INTO leaverecord (leaveid, startdate, enddate, reason, status, staffid)
 VALUES 
-(1, '2025-10-01', '2025-10-05', 'Annual Leave', 'Approved', 1);
+(1, '2025-10-01', '2025-10-05', 'Annual Leave', 'Approved', 1); --- Insert a leave record for the staff member
 
 INSERT INTO LeaveRecord (LeaveID, StartDate, EndDate, Reason, Status, StaffID)
 VALUES
@@ -123,14 +139,16 @@ VALUES
 (3, '2025-10-18', '2025-10-20', 'Vacation', 'Pending', 2),
 (5, '2025-10-21', '2025-10-22', 'Personal', 'Pending', 3),
 (4, '2025-10-23', '2025-10-24', 'Medical', 'Pending', 4),
-(7, '2025-10-25', '2025-10-26', 'Family Event', 'Pending', 5);
+(7, '2025-10-25', '2025-10-26', 'Family Event', 'Pending', 5); --- Insert multiple leave records for testing
+--- View all leave records
 SELECT *FROM LeaveRecord;
----5
+
+---- Update leave status when approved by HR.
 UPDATE LeaveRecord
 SET Status = 'Approved'
 WHERE StaffID = 2 AND Status = 'Pending';
 
------ 5
+----- 5. Insert attendance records for staff members.
 INSERT INTO Attendance (AttendanceID, StaffID, AttendanceDate, Status, HoursWorked)
 VALUES
 (1, 1, '2025-10-01', 'Present', 8),
@@ -141,7 +159,7 @@ VALUES
 (6, 2, '2025-10-03', 'Absent', 0),
 (7, 3, '2025-10-01', 'Present', 8);
 
----- 6
+---- 6. Write a query to find staff members with more than 2 absences in the past month or Identify staff with repeated absence in attendance records. 
 SELECT 
     s.StaffID,
     s.FirstName || ' ' || s.LastName AS StaffName,
@@ -153,7 +171,7 @@ GROUP BY s.StaffID, s.FirstName, s.LastName
 HAVING COUNT(a.AttendanceID) >= 2
 ORDER BY AbsenceCount DESC;
 
------7
+-----7. Create a view to summarize payroll information per department.
 CREATE OR REPLACE VIEW DepartmentPayrollSummary AS
 SELECT
     d.DeptID,
@@ -166,9 +184,10 @@ JOIN Payroll p ON s.StaffID = p.SalaryID  -- assuming SalaryID in Payroll links 
 GROUP BY d.DeptID, d.DeptName
 ORDER BY d.DeptName;
 
-----8
+----8. Implement a trigger to automatically update the Payroll table whenever a staff member's salary is updated.
 ALTER TABLE Staff
 ADD COLUMN Salary NUMERIC(12,2);
+-- Create the trigger to call the function after an update on Staff table
 
 CREATE OR REPLACE FUNCTION recalc_payroll()
 RETURNS TRIGGER AS $$
@@ -181,11 +200,7 @@ BEGIN
     RETURN NEW;
 END;
 
-SELECT table_name
-FROM information_schema.tables
-WHERE table_schema = 'public'
-  AND table_type = 'BASE TABLE';
-  
+
 
 
 
