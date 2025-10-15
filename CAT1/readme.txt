@@ -1,2 +1,3 @@
 ## My sChema details
 ##    University staff information and pyroll system  is system designed to manage staff records and automate salary processing within a university.
+## The **University Staff Information and Payroll System** is a  system that helps the university keep track of its staff and manage their salaries. It stores important information about each employee, like their name, job title, department, and contact details. It also calculates their monthly salary, including things like bonuses, deductions, and taxes, and helps make sure they are paid correctly and on time. This system makes the process of managing staff and paying them easier, more accurate, and more organized.

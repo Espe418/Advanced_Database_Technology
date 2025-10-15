@@ -172,33 +172,52 @@ HAVING COUNT(a.AttendanceID) >= 2
 ORDER BY AbsenceCount DESC;
 
 -----7. Create a view to summarize payroll information per department.
-CREATE OR REPLACE VIEW DepartmentPayrollSummary AS
+
+CREATE OR REPLACE VIEW payroll_summary_per_department AS
 SELECT
-    d.DeptID,
-    d.DeptName,
-    COUNT(s.StaffID) AS NumEmployees,
-    SUM(p.Netpay) AS TotalNetPay
-FROM Department d
-JOIN Staff s ON d.DeptID = s.DeptID
-JOIN Payroll p ON s.StaffID = p.SalaryID  -- assuming SalaryID in Payroll links to StaffID
-GROUP BY d.DeptID, d.DeptName
-ORDER BY d.DeptName;
+    d.deptname,
+    COUNT(DISTINCT p.staffid) AS employee_count,
+    SUM(p.netpay) AS total_payroll_cost,
+    AVG(p.netpay) AS average_payroll_cost
+FROM
+    payroll p
+JOIN
+    staff s ON p.staffid = s.staffid
+JOIN
+    department d ON s.deptid = d.deptid
+GROUP BY
+    d.deptname     
+ORDER BY
+    d.deptname;
+SELECT * FROM payroll_summary_per_department;
 
 ----8. Implement a trigger to automatically update the Payroll table whenever a staff member's salary is updated.
 ALTER TABLE Staff
 ADD COLUMN Salary NUMERIC(12,2);
 -- Create the trigger to call the function after an update on Staff table
 
-CREATE OR REPLACE FUNCTION recalc_payroll()
+CREATE OR REPLACE FUNCTION recalc_netpay()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Update Payroll NetPay to match the new salary
-    UPDATE Payroll
-    SET NetPay = NEW.Salary
-    WHERE SalaryID = NEW.StaffID;
-    
+    NEW.netpay := NEW.basepay + NEW.allowance - NEW.deductions;
     RETURN NEW;
 END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER trg_recalc_netpay
+BEFORE INSERT OR UPDATE ON salary
+FOR EACH ROW
+EXECUTE FUNCTION recalc_netpay();
+--- Test the trigger by updating a salary record
+--UPDATE salary
+
+INSERT INTO salary (salaryid, basepay, allowance, deductions)
+VALUES (1, 5000, 500, 300);
+
+SELECT * FROM Salary WHERE salaryid = 1;
+
+
+
+
 
 
 
