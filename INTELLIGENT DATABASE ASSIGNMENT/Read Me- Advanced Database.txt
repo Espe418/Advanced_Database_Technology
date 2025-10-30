@@ -1,0 +1,93 @@
+# NYIRASABATO ESPERANCE - Advanced Database Technology Exam
+
+**Reg No:** 215009303  
+**Date:** 28/10/2025  
+**Course:** Advanced Database Technology  
+**Project:** Staff Information & Payroll - Distributed Database
+##The **University Staff Information and Payroll System** is a database-driven program made to handle payroll processing, reporting, and personnel information.  Accurate salary management is ensured and administrative responsibilities are streamlined.
+
+## Overview
+Using PostgreSQL 
+##Task1:Split your database into two logical nodes (e.g.BranchDB_A, BranchDB_B) using Vertical fragmentation. 
+-- Create logical nodes as schemas
+
+ -Database connections and cross-node joins; horizontal fragmentation and recombination
+
+ -Combining and classifying in parallel versus serial; two-phase commit and recovery
+ -Conflict and diagnosis of distributed locks
+ -Declarative restrictions and handling of exceptions; Statement-level denormalized total triggers
+ -Roll-ups of recursive hierarchies
+ -Inference over triples that is recursive
+ -Alerts about business limits with functions and triggers
+
+## Node Structure
+
+**Node_A (HR/Payroll_A)**: payroll_a, staff, department  
+**Node_B (Finance/Payroll_B)**: payroll_b, attendance, business_limits
+
+Total committed rows across all tasks do not exceed 10 to comply with exam constraints.
+
+## Implementation Details
+
+### A1: Horizontal Fragment  & Recombine  those fragment table as pyroll_all
+ -Created tables `payroll_a` and `payroll_b` with <10 rows.in node A nd Node B
+-Created `payroll_all` view using `UNION ALL`.
+-checksums were verified to match pieces with the combined view.
+ 
+
+### A2: Database Link & Cross-Node Join
+- Creating server FDW link `branchb_server` from Node_A to Node_B.
+- performed distributed join between `payroll_a` and remote `staff` table.
+
+### A3: Parallel vs Serial Aggregation
+- Carried out `SUM(total_pay)` grouped by `department` serially and with parallel workers.
+
+### A4: Two-Phase Commit & Recovery
+- Coordinated transaction commit across nodes was shown.using `PREPARE TRANSACTION` and `COMMIT PREPARED`.
+- Included rollback scenario and recovery verification.
+
+### A5: Distributed Lock Conflict & Diagnosis (no extra rows)   
+- Modelled lock conflict between Node_A and Node_B sessions.
+- observed`pg_locks` for blockers and waiters.
+- Resolved deadlock via rollback or commit.
+
+### B6: Declarative Rules Hardening (≤10 committed rows)    
+- Added NOT NULL and CHECK constraints to Payroll and Attendance.
+- Tested passing and failing inserts with DO blocks.
+
+### B7: E–C–A Trigger for Denormalized Totals (small DML set)   
+- Created `Payroll_AUDIT` table.
+- Trigger `trg_update_payroll_totals` updates totals after any DML on Attendance.
+- Verified totals recomputed and audit logged.
+
+### B8::Recursive Hierarchy Roll-Up (6–10 rows)  
+- Table `HIER` created with 3-level hierarchy.
+- Recursive CTE query computes rollup of child_id, root_id, and depth.
+
+### B9: Mini-Knowledge Base with Transitive Inference (≤10 facts)   
+- Table `TRIPLE` stores 8–10 domain facts.
+- Recursive query infers transitive `isA` relations.
+
+### B10: Business Limit Alert
+- Table `BUSINESS_LIMITS` stores rules.
+- Function `fn_should_alert` checks for limit violations.
+- Trigger `trg_check_business_limit` raises exception if violation occurs.
+- Demonstrated passing and failing inserts.
+
+## How to Run
+1. Create both nodes `Node_A` and `Node_B`.
+2. Execute schema creation scripts for payroll, staff, attendance, and limits.
+3. Insert seed data as per exam instructions.
+4. Run SQL statements in order: Fragmentation → Database Link → View → Aggregation → 2PC → Lock Demo → Constraints → Triggers → Hierarchy → Triples → Business Limits.
+5. Validate outputs using `SELECT` statements as shown in scripts.
+
+## Notes
+- All operations respect the < 10 committed row budget for the exam.
+- Parallelism, triggers, and distributed transactions demonstrated with PostgreSQL FDW.
+- Includes exception handling for data integrity violations.
+
+---
+
+**Author:** Nyirasabato Esperance  
+**Reg No:** 215009303  
+**Date:** 28/10/2025

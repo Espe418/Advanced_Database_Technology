@@ -43,7 +43,7 @@ VALUES (1, 101, 'Aspirin', -10);
 
 -- 2. Start date after end date
 INSERT INTO PATIENT_MED (PATIENT_MED_ID, PATIENT_ID, MED_NAME, DOSE_MG, START_DT, END_DT)
-VALUES (2, 101, 'Ibuprofen', 200, DATE '2025-12-31', DATE '2025-01-01');
+VALUES (2, 101, 'Ibuprofen', 200, DATE '2025-12-31', DATE '2025-10-12');
 -- ERROR: violates CK_RX_DATES
 ----PASSING INSERT
 -- Add a patient first

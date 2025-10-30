@@ -2,8 +2,7 @@
 
 ## Case Study Overview
 
-This project implements a relational database system for managing university staff profiles, departmental assignments, salary structures, leave applications, attendance, and payroll processing. It ensures administrative visibility and compliance with institutional HR policies.
-
+In order to manage university staff profiles, departmental assignments, payment structures, leave requests, attendance, and payroll processing, this project uses a relational database system.  It guarantees adherence to institutional HR regulations and administrative visibility.
 ---
 
 ## Database Schema
@@ -97,9 +96,6 @@ The system follows a normalized structure with clear 1:N relationships. Each sta
 
 ---
 
-## Getting Started
+**Author:** Nyirasabato Esperance    
+**Date:** 18/10/2025
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/university-payroll-system.git
-   cd university-payroll-system
