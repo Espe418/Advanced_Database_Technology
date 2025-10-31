@@ -5,7 +5,7 @@
 
 #  Parallel and Distributed Database System (PostgreSQL / pgAdmin)
 
-##  Purpose
+##  GOAL
 This lab assessment help me to **design, implement, and analyze a parallel and distributed database system** using **PostgreSQL/pgAdmin**.  
 **University Staff Information and Payroll System.**
 
@@ -88,7 +88,7 @@ INTO public;
 SELECT s.FullName, s.Role, sal.BasePay, sal.Allowances
 FROM Staff s
 JOIN Salary sal ON s.StaffID = sal.StaffID;
-```
+
 
 ---
 
@@ -173,12 +173,12 @@ INSERT INTO Payroll_Archive SELECT * FROM Payroll;
 
 ##  TASK 8: Three-Tier Client–Server Architecture
 
-**Layers:**
+##Layers
 1. **Presentation Layer:** Web interface or pgAdmin client  
 2. **Application Layer:** Python, PHP, or middleware logic handling SQL operations  
 3. **Database Layer:** PostgreSQL nodes (`BranchDB_A`, `BranchDB_B`) connected via FDW  
 
-**Data Flow:**
+##Data Flow
 
 User Interface → Application Logic → BranchDB_A ↔ BranchDB_B
 
@@ -197,14 +197,14 @@ The optimizer minimizes **data movement** by **pushing filters to remote nodes**
 
 ## TASK 10: Performance Benchmark and Report
 
-**Centralized Query:**
+##Centralized Query
 ---sql
 SET max_parallel_workers_per_gather = 0;
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE)
 SELECT s.fullname, (sal.basepay + sal.allowances - sal.deductions) AS net_pay
 FROM staff s JOIN salary sal ON s.staffid = sal.staffid;
 
-**Parallel Query:**
+##Parallel Query
 ---sql code
 SET max_parallel_workers_per_gather = 4;
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE)
@@ -212,13 +212,13 @@ SELECT s.fullname, (sal.basepay + sal.allowances - sal.deductions) AS net_pay
 FROM staff s JOIN salary sal ON s.staffid = sal.staffid;
 
 
-**Distributed Query:**
+##Distributed Query
 --sql code
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE)
 SELECT s.fullname, (sal.basepay + sal.allowances - sal.deductions) AS net_pay
 FROM staff s JOIN public.salary_remote sal ON s.staffid = sal.staffid;
 
-**Analysis:**  
+##Result and Analysis
 Compare execution time and I/O statistics (shared reads, hits).  
 Parallel and distributed queries should show **lower execution time and improved scalability** compared to the centralized version.
 
